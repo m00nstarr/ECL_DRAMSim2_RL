@@ -634,6 +634,13 @@ void IniReader::InitEnumsFromStrings()
 			DEBUG("SCHEDULING: Bank Then Rank");
 		}
 	}
+	else if (SCHEDULING_POLICY == "RL")
+	{
+		schedulingPolicy = RL_sched;
+		if( DEBUG_INI_READER){
+			DEBUG("SCHEDULING: RL");
+		}
+	}
 	else
 	{
 		cout << "WARNING: Unknown scheduling policy '"<<SCHEDULING_POLICY<<"'; valid options are 'rank_then_bank_round_robin' or 'bank_then_rank_round_robin'; defaulting to Bank Then Rank Round Robin" << endl;

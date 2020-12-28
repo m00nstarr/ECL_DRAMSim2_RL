@@ -1,4 +1,4 @@
-/*********************************************************************************
+/********************************************************************************
 *  Copyright (c) 2010-2011, Elliott Cooper-Balis
 *                             Paul Rosenfeld
 *                             Bruce Jacob
@@ -45,6 +45,9 @@
 #include <assert.h>
 
 using namespace DRAMSim;
+
+extern std::tuple<int,int> current_state;
+
 
 CommandQueue::CommandQueue(vector< vector<BankState> > &states, ostream &dramsim_log_) :
 		dramsim_log(dramsim_log_),
@@ -191,6 +194,8 @@ bool CommandQueue::pop(BusPacket **busPacket)
 		 Otherwise, it starts looking for rows to close (in open page)
 	*/
 
+	//moon 201228 , get current_state ( #READS , #WRITES in transactionQUEUE )
+	//std::cout << get<0>(current_state) << " " << get<1>(current_state)<< std::endl;
 	if (rowBufferPolicy==ClosePage)
 	{
 		bool sendingREF = false;
@@ -747,6 +752,13 @@ void CommandQueue::nextRankAndBank(unsigned &rank, unsigned &bank)
 				rank = 0;
 			}
 		}
+	}
+	else if ( schedulingPolicy == RL_sched){
+
+				
+
+
+
 	}
 	else
 	{

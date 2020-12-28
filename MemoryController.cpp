@@ -39,6 +39,7 @@
 #include "MemorySystem.h"
 #include "AddressMapping.h"
 #include "fstream"
+#include "tuple"
 
 #define SEQUENTIAL(rank,bank) (rank*NUM_BANKS)+bank
 
@@ -60,6 +61,8 @@ extern unsigned IDD7;
 extern float Vdd; 
 
 using namespace DRAMSim;
+
+std::tuple <int,int> current_state = std::make_tuple(0,0);
 
 MemoryController::MemoryController(MemorySystem *parent, CSVWriter &csvOut_, ostream &dramsim_log_) :
 		dramsim_log(dramsim_log_),
@@ -110,6 +113,30 @@ MemoryController::MemoryController(MemorySystem *parent, CSVWriter &csvOut_, ost
 		refreshCountdown.push_back((int)((REFRESH_PERIOD/tCK)/NUM_RANKS)*(i+1));
 	}
 }
+
+std::tuple<int,int> MemoryController::count_R_W(){
+
+	std::tuple<int, int> read_write;
+	
+	size_t read = 0;
+	size_t write = 0; 
+	for( size_t i = 0 ; i< transactionQueue.size(); i++){
+		Transaction *transaction = transactionQueue[i];
+
+		if ( transaction -> transactionType == DATA_READ) {
+			read++;
+		}
+		else if ( transaction -> transactionType == DATA_WRITE) {
+			write++;
+		}			 
+	
+	}
+	
+	//std::cout << read << " " << write << std::endl;
+
+	return std::make_tuple(read, write);
+}
+
 
 //get a bus packet from either data or cmd bus
 void MemoryController::receiveFromBus(BusPacket *bpacket)
@@ -282,6 +309,8 @@ void MemoryController::update()
 	//pass a pointer to a poppedBusPacket
 
 	//function returns true if there is something valid in poppedBusPacket
+
+	current_state = count_R_W();	
 	if (commandQueue.pop(&poppedBusPacket))
 	{
 		if (poppedBusPacket->busPacketType == WRITE || poppedBusPacket->busPacketType == WRITE_P)
@@ -298,6 +327,7 @@ void MemoryController::update()
 		//for readability's sake
 		unsigned rank = poppedBusPacket->rank;
 		unsigned bank = poppedBusPacket->bank;
+
 		switch (poppedBusPacket->busPacketType)
 		{
 			case READ_P:
@@ -711,10 +741,12 @@ void MemoryController::update()
 	//
 	if (DEBUG_TRANS_Q)
 	{
-		PRINT("== Printing transaction queue");
+		//moon
+		PRINT("== printing transaction queue");
 		for (size_t i=0;i<transactionQueue.size();i++)
 		{
 			PRINTN("  " << i << "] "<< *transactionQueue[i]);
+
 		}
 	}
 

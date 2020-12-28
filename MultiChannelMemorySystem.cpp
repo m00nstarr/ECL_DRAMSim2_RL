@@ -251,6 +251,9 @@ void MultiChannelMemorySystem::InitOutputFiles(string traceFilename)
 			{
 				sched = "RtB";
 			}
+			else if ( schedulingPolicy == RL ){
+				sched = "RL";
+			}
 			if (queuingStructure == PerRankPerBank)
 			{
 				queue = "pRankpBank";

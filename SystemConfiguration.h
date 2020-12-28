@@ -177,7 +177,8 @@ enum QueuingStructure
 enum SchedulingPolicy
 {
 	RankThenBankRoundRobin,
-	BankThenRankRoundRobin
+	BankThenRankRoundRobin,
+	RL_sched
 };
 
 

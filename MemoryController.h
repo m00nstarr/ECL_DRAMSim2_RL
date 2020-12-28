@@ -68,7 +68,7 @@ public:
 	void update();
 	void printStats(bool finalStats = false);
 	void resetStats(); 
-
+	std::tuple<int,int> count_R_W();
 
 	//fields
 	vector<Transaction *> transactionQueue;
